@@ -10,17 +10,21 @@ angularModule.component('rootContainer', {
     <div>
       <div>
         <h2>This is an angular component, count: {{count}}</h2>
+        Collection: {{collection}}
+        <br/>
 
-        <button ng-click="inc()">inc</button>
+        <button ng-click="add()">add</button>
       </div>
 
       <react-component name="ReactComponent" />
     </div>
   `,
-  controller: ['$scope', 'Counter', function ($scope, Counter) {
+  controller: ['$scope', 'Counter', 'MutableCollection', function ($scope, Counter, MutableCollection) {
     Counter.increment();
+    $scope.collection = MutableCollection.getCollection();
     $scope.count = Counter.getCount();
-    $scope.inc = () => Counter.increment();
+    // $scope.inc = () => Counter.increment();
+    $scope.add = () => MutableCollection.add(Math.random())
   }]
 })
 

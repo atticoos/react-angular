@@ -3,15 +3,17 @@ import {
   AngularProvider,
   connectAngular as connect,
   resolve,
-  compose
+  compose,
+  watch
 } from './connector';
 
-function ReactComponent ({Counter, count}) {
+function ReactComponent ({Counter, count, collection}) {
   return (
     <div>
       <h2>This is a React component</h2>
       count from service: {Counter.getCount()}<br/>
-      count from resolver: {count}
+      count from resolver: {count}<br/>
+      collection: {JSON.stringify(collection)}
     </div>
   )
 }
@@ -20,7 +22,12 @@ const ConnectedReactComponent = compose(
   // Angular resolver
   resolve({
     count: ['Counter', Counter => Counter.getCount()],
+    collection: ['MutableCollection', MutableCollection => MutableCollection.getCollection()]
   }),
+
+  // Watch mutations
+  watch('count', 'collection'),
+
   // Angular service injector
   connect('Counter')
 )(ReactComponent)
