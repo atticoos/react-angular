@@ -1,15 +1,29 @@
 import React from 'react';
-import {AngularProvider, connectAngular} from './connector';
+import {
+  AngularProvider,
+  connectAngular as connect,
+  resolve,
+  compose
+} from './connector';
 
-function ReactComponent ({Counter}) {
+function ReactComponent ({Counter, count}) {
   return (
-    <span>A react component, with the count: {Counter.getCount()}</span>
+    <div>
+      <h2>This is a React component</h2>
+      count from service: {Counter.getCount()}<br/>
+      count from resolver: {count}
+    </div>
   )
 }
 
-const ConnectedReactComponent = connectAngular(
-  'Counter'
-)(ReactComponent);
+const ConnectedReactComponent = compose(
+  // Angular resolver
+  resolve({
+    count: ['Counter', Counter => Counter.getCount()],
+  }),
+  // Angular service injector
+  connect('Counter')
+)(ReactComponent)
 
 export default function ReactApp () {
   return (

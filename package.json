@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "angular": "^1.6.9",
+    "bluebird": "^3.5.1",
     "ngreact": "^0.5.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0"

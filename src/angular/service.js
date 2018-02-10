@@ -4,19 +4,16 @@ import ReactComponent from '../react';
 const angularModule = angular.module('reactApp.service', []);
 
 angularModule.factory('Counter', function ServiceA () {
-  var count = 0;
-
   return {
+    count: 0,
     getCount() {
-      return count
+      return this.count
     },
     increment() {
-      count = count + 1;
-      return count;
+      this.count++;
     },
     decrement() {
-      count = count - 1;
-      return count;
+      this.count--;
     }
   }
 });
