@@ -14,7 +14,7 @@ export default function withInjector (WrappedComponent) {
     }
 
     render() {
-      return <WrappedComponent $injector={this.$injector} />
+      return <WrappedComponent {...this.props} $injector={this.$injector} />
     }
   }
   return ComponentWithInjector;

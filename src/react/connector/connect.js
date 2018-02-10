@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import withInjector from './withInjector';
 
 /**
  * Connect a React component to the Angular runtime.
@@ -24,10 +25,8 @@ export default function connectAngular (...deps) {
       constructor (props, context) {
         super(props, context);
 
-        let $injector = context.$ng.injector();
-
         this.$injections = deps.reduce((injections, dep) => {
-          injections[dep] = $injector.get(dep)
+          injections[dep] = props.$injector.get(dep)
           return injections;
         }, {});
       }
@@ -38,6 +37,7 @@ export default function connectAngular (...deps) {
         )
       }
     }
-    return ConnectedAngularComponent;
+
+    return withInjector(ConnectedAngularComponent);
   };
 }
