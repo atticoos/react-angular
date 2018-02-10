@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   AngularProvider,
-  connectAngular as connect,
+  connectAngular as inject,
   resolve,
   compose,
   watch
@@ -29,7 +29,7 @@ const ConnectedReactComponent = compose(
   watch('count', 'collection'),
 
   // Angular service injector
-  connect('Counter')
+  inject('Counter')
 )(ReactComponent)
 
 export default function ReactApp () {
