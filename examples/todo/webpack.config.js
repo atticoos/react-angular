@@ -1,14 +1,19 @@
 const path = require('path')
 const webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
   entry: {
-    main: './src/react/connector/index.js'
+    main: './angular.js'
   },
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'bundle.js',
-    libraryTarget: 'umd'
+    filename: 'bundle.js'
+  },
+  resolve: {
+    alias: {
+      'angular-react': path.resolve(__dirname, '../../')
+    }
   },
   module: {
     loaders: [
@@ -21,5 +26,11 @@ module.exports = {
         }
       }
     ]
-  }
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      inject: true,
+      template: path.join(__dirname, 'index.html')
+    })
+  ]
 }
