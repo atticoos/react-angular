@@ -37,11 +37,6 @@ class Todos extends React.Component {
             </li>
           ))}
         </ul>
-        <button onClick={() => this.props.alert()}>alert</button>
-        <input
-          value={this.props.sharedState}
-          onChange={e => this.props.onSharedStateChanged(e.target.value)}
-        />
       </div>
     )
   }

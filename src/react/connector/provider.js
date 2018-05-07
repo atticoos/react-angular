@@ -6,11 +6,13 @@ import angular from 'angular'
 // and provides it to the rest of the React app
 export default class AngularProvider extends React.Component {
   static propTypes = {
-    ngApp: PropTypes.object
+    ngApp: PropTypes.object,
+    $injector: PropTypes.object
   }
 
   static childContextTypes = {
-    $ng: PropTypes.object
+    $ng: PropTypes.object,
+    $injector: PropTypes.object
   }
 
   componentDidMount() {
@@ -19,7 +21,8 @@ export default class AngularProvider extends React.Component {
 
   getChildContext() {
     return {
-      $ng: this.props.ngApp
+      $ng: this.props.ngApp,
+      $injector: this.props.$injector
     };
   }
 

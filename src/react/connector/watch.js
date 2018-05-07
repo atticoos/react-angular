@@ -11,14 +11,14 @@ export default function watch (...watchProps) {
         this.$watchScope = $rootScope.$new();
 
         watchProps.forEach(prop => {
-          let skipFirst = true;
+          // let skipFirst = false;
           this.$watchScope.$watch(
             () => this.props[prop],
             nextValue => {
-              if (skipFirst) {
-                skipFirst = false;
-                return;
-              }
+              // if (skipFirst) {
+              //   skipFirst = false;
+              //   return;
+              // }
               this.setState(prevState => ({
                 [prop]: nextValue
               }))

@@ -43,11 +43,13 @@ export default function resolve (resolveMap) {
       }
 
       render() {
+        if (!this.state.$resolved) {
+          return null;
+        }
+
         return (
           <WrappedComponent
             {...this.props}
-            $resolved={this.state.$resolved}
-            $failed={this.state.$failed}
             {...this.state.$resolves}
           />
         )
