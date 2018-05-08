@@ -1,20 +1,7 @@
-const AngularServicesExample = {
-  template: `
-    <div>
-      <input
-        type="text"
-        ng-model="$ctrl.input"
-      />
-      <button ng-click="$ctrl.addTodo()">Add</button>
+import template from './angular.html'
 
-      <ul>
-        <li ng-repeat="todo in $ctrl.todos track by $index">
-          {{todo}}
-          <button ng-click="$ctrl.removeTodo($index)">x</button>
-        </li>
-      </ul>
-    </div>
-  `,
+const AngularServicesExample = {
+  template,
   controller: ['TodosService', function (Todos) {
     this.addTodo = ()  => {
       Todos.add(this.input);

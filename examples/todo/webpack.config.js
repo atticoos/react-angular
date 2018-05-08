@@ -17,15 +17,29 @@ module.exports = {
     }
   },
   module: {
-    loaders: [
+    rules: [
+      {
+        test: /\.html$/,
+        exclude: /node_modules/,
+        use: 'raw-loader'
+        // use: {
+        //   loader: 'raw-loader',
+        // }
+      },
       {
         test: /.js?$/,
-        loader: 'babel-loader',
         exclude: /node_modules/,
-        query: {
-          presets: ['es2015', 'stage-0', 'react']
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['es2015', 'stage-0', 'react']
+          }
+
         }
-      }
+        // query: {
+        //   presets: ['es2015', 'stage-0', 'react']
+        // }
+      },
     ]
   },
   plugins: [

@@ -25,8 +25,11 @@ export default function inject (...deps) {
       constructor (props, context) {
         super(props, context);
 
+        const $rootScope = props.$injector.get('$rootScope');
+        const $applyScope = $rootScope.$new();
+
         this.$injections = deps.reduce((injections, dep) => {
-          injections[dep] = props.$injector.get(dep)
+          injections[dep] = withDigest(props.$injector.get(dep), $applyScope)
           return injections;
         }, {});
       }
@@ -40,4 +43,29 @@ export default function inject (...deps) {
 
     return withInjector(ConnectedAngularComponent);
   };
+}
+
+function withDigest (api, $scope) {
+  let digestHandler = {
+    get (obj, prop) {
+      let target = obj[prop]
+
+      if (typeof target === 'function') {
+        return (...args) => {
+          return $scope.$apply(() => {
+            return obj[prop].call(obj[prop], ...args)
+          })
+        }
+      }
+      if (Array.isArray(target)) {
+        return target
+      }
+      if (typeof target === 'object') {
+        return new Proxy(target, handler)
+      }
+      return target;
+    }
+  }
+
+  return new Proxy(api, digestHandler)
 }
