@@ -18,7 +18,7 @@ app.component('angularTodosNormal', {
       <ul>
         <li ng-repeat="todo in $ctrl.todos track by $index">
           {{todo}}
-          <button ng-click="$ctrl.removeTodo($index)">x</button>
+          <button ng-click="$ctrl.removeTodo({i: $index})">x</button>
         </li>
       </ul>
     </div>

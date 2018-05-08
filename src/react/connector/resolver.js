@@ -1,6 +1,7 @@
 import React from 'react';
 import Promise from 'bluebird';
 import withInjector from './withInjector';
+import watch from './watch';
 
 /**
  * Angular resolves for a React component.
@@ -11,7 +12,21 @@ import withInjector from './withInjector';
  * @param {*} resolveMap
  */
 export default function resolve (resolveMap) {
+  const watchers = Object.keys(resolveMap).filter(resolverName => {
+    let resolver = resolveMap[resolverName];
+    if (typeof resolver !== 'object' || Array.isArray(resolver)) {
+      return false;
+    }
+    return resolver.watch
+  });
+  const withWatchers = watch(watchers);
+
   return WrappedComponent => {
+    if (watchers.length > 0) {
+      let withWatchers = watch(watchers)
+      WrappedComponent = withWatchers(WrappedComponent)
+    }
+
     class ComponentWithResolves extends React.Component {
       state = {
         $resolves: {},
@@ -21,13 +36,14 @@ export default function resolve (resolveMap) {
 
       componentDidMount() {
         let pendingResolves = Object.keys(resolveMap).reduce((resolves, prop) => {
-          let deps = resolveMap[prop]
-            .slice(0, resolveMap[prop].length - 1)
+          let resolver = withoutWatch(resolveMap[prop])
+          let deps = resolver
+            .slice(0, resolver.length - 1)
             .map(dep => this.props.$injector.get(dep));
 
-          let resolver = resolveMap[prop][resolveMap[prop].length - 1];
+          let resolve = resolver[resolver.length - 1];
 
-          resolves[prop] = resolver(...deps)
+          resolves[prop] = resolve(...deps)
           return resolves;
         }, {});
 
@@ -58,4 +74,15 @@ export default function resolve (resolveMap) {
 
     return withInjector(ComponentWithResolves);
   }
+}
+
+resolve.watch = function watch (resolver) {
+  return {
+    watch: true,
+    resolver
+  };
+};
+
+function withoutWatch (resolver) {
+  return resolver.resolver || resolver;
 }

@@ -2,21 +2,29 @@ import React from 'react';
 import angular from 'angular';
 import {
   AngularProvider,
-  connectAngular as inject,
-  apply as withApply,
-  resolve,
-  compose,
-  watch,
-  // register
+  connectAngular as $inject,
+  apply as $withApply,
+  resolve as $resolve,
+  compose
 } from 'angular-react';
 
+const connect = compose(
+  $inject('TodosService'),
+  $resolve({
+    todos: $resolve.watch(['TodosService', TodosService => TodosService.getTodos()])
+  }),
+  $withApply({
+    addTodo: ['TodosService', TodosService => todo => TodosService.add(todo)]
+  })
+)
+
 class Todos extends React.Component {
-  addItem() {
+  addTodo() {
     this.props.addTodo(this.input.value)
     this.input.value = ''
   }
 
-  removeItem(i) {
+  removeTodo(i) {
     this.props.$apply(() => this.props.TodosService.remove(i));
   }
 
@@ -24,13 +32,13 @@ class Todos extends React.Component {
     return (
       <div>
         <input type="text" ref={input => this.input = input} />
-        <button onClick={() => this.addItem()}>Add</button>
+        <button onClick={() => this.addTodo()}>Add</button>
 
         <ul>
           {this.props.todos.map((todo, i) => (
             <li key={i}>
               {todo}
-              <button onClick={() => this.removeItem(i)}>x</button>
+              <button onClick={() => this.removeTodo(i)}>x</button>
             </li>
           ))}
         </ul>
@@ -39,22 +47,4 @@ class Todos extends React.Component {
   }
 }
 
-const ConnectedTodos = compose(
-  // Angular resolver
-  resolve({
-    todos: ['TodosService', TodosService => TodosService.getTodos()]
-  }),
-
-  // Watch mutations
-  watch('todos'),
-
-  // Functions bound to digest cycle ($scope.$apply(..))
-  withApply({
-    addTodo: ['TodosService', TodosService => todo => TodosService.add(todo)]
-  }),
-
-  // // Angular service injector
-  inject('TodosService')
-)(Todos)
-
-export default ConnectedTodos;
+export default connect(Todos);

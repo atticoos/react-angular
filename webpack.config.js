@@ -5,6 +5,7 @@ module.exports = {
   entry: {
     main: './src/react/connector/index.js'
   },
+  devtool: 'cheap-eval-source-map',
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'bundle.js',

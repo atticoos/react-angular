@@ -72,7 +72,6 @@ app.component('serviceTodosExample', {
   }
 })
 
-
 app.component('app', {
   template: `
     <div>
@@ -86,45 +85,6 @@ app.component('app', {
     $scope.onSharedStateChanged = value => $scope.sharedState = value
   }]
 });
-
-// app.component('angularTodos', {
-//   bindings: {
-//     alert: '&',
-//     sharedState: '='
-//   },
-//   template: `
-//     <div>
-//       <input
-//         type="text"
-//         ng-model="input"
-//       />
-//       <button ng-click="addTodo()">Add</button>
-
-//       <ul>
-//         <li ng-repeat="todo in todos track by $index">
-//           {{todo}}
-//           <button ng-click="removeTodo($index)">x</button>
-//         </li>
-//       </ul>
-//       <button ng-click="$ctrl.alert()">alert</button>
-//       <input type="text" ng-model="$ctrl.sharedState" />
-//     </div>
-//   `,
-//   controller: ['$scope', 'TodosService', function ($scope, Todos) {
-//     // console.log('test', $scope.test)
-//     $scope.todos = Todos.getTodos()
-//     $scope.input = '';
-
-//     $scope.addTodo = ()  => {
-//       Todos.add($scope.input);
-//       $scope.input = '';
-//     };
-
-//     $scope.removeTodo = index => {
-//       Todos.remove(index);
-//     }
-//   }]
-// })
 
 app.factory('TodosService', function TodosService () {
   var todos = [];

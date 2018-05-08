@@ -4,46 +4,38 @@ Access your Angular application from within React.
 
 ```js
 import {
-  AngularProvider,
+  registerReactComponent,
   compose,
-  inject,
-  resolve,
-  watch
+  $inject,
+  $resolve
 } from 'react-angular';
 
-// Root react app
-function ReactApp () {
-  return (
-    <AngularProvider ngApp={angular.element(document.querySelector('body'))}>
-      <ConnectedReactComponent />
-    </AngularProvider>
-  )
-}
+const app = angular.module('your-project.react', ['ngReact'])
 
-// Your normal React component
-function ReactComponent ({Counter, count, collection}) {
+// Define the component dependencies (resolves, services, etc)
+const connect = compose(
+  // Define data resolvers
+  $resolve({
+    count: $resolve.watch(['Counter', Counter => Counter.getCount()]),
+    originalCount: ['Counter', Counter => Counter.getCount()]
+  }),
+
+  // Inject angular services,
+  $inject('Counter')
+)
+
+// Your React component
+function ReactConter ({Counter, count, originalCount}) {
   return (
     <div>
-      <h2>React Component</h2>
-      <p>Count from CounterService: {Counter.getCount()}</p>
+      <p>Count direction from CounterService: {Counter.getCount()}</p>
       <p>Count from resolve: {count}</p>
-      <p>Collection from resolve: {collection}</p>
+      <p>Original count (without watchers) from resolve: {originalCount}</p>
+      <button onClick={() => Counter.increment()}>+</button>
+      <button onClick={() => Counter.decrement()}>-</button>
     </div>
   )
 }
 
-// Bind your React component to your Angular instance
-const ConnectedReactComponent = compose(
-  // Define data resolvers
-  resolve({
-    count: ['Counter', Counter => Counter.getCount()],
-    collection: ['MutableCollection', MutableCollection => MutableCollection.getCollection()]
-  }),
-
-  // Watch resolver mutations
-  watch('count', 'collection'),
-
-  // Inject angular services,
-  inject('Counter')
-)(ReactComponent)
-```
+// Register the component to be available in Angular
+registerReactComponent(app, 'reactCounter', connect(ReactCounter))

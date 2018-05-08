@@ -7,29 +7,31 @@ app.component('angularTodosService', {
     <div>
       <input
         type="text"
-        ng-model="input"
+        ng-model="$ctrl.input"
       />
-      <button ng-click="addTodo()">Add</button>
+      <button ng-click="$ctrl.addTodo()">Add</button>
 
       <ul>
-        <li ng-repeat="todo in todos track by $index">
+        <li ng-repeat="todo in $ctrl.todos track by $index">
           {{todo}}
-          <button ng-click="removeTodo($index)">x</button>
+          <button ng-click="$ctrl.removeTodo($index)">x</button>
         </li>
       </ul>
     </div>
   `,
-  controller: ['$scope', 'TodosService', function ($scope, Todos) {
-    $scope.todos = Todos.getTodos()
-    $scope.input = '';
-
-    $scope.addTodo = ()  => {
-      Todos.add($scope.input);
-      $scope.input = '';
+  controller: ['TodosService', function (Todos) {
+    this.addTodo = ()  => {
+      Todos.add(this.input);
+      this.input = '';
     };
 
-    $scope.removeTodo = index => {
+    this.removeTodo = index => {
       Todos.remove(index);
+    }
+
+    this.$onInit = () => {
+      this.todos = Todos.getTodos()
+      this.input = ''
     }
   }]
 })
