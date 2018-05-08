@@ -10,6 +10,7 @@
     "angular": "^1.6.9",
     "bluebird": "^3.5.1",
     "ngreact": "^0.5.1",
+    "prop-types": "^15.6.1",
     "raw-loader": "^0.5.1",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",

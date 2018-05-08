@@ -1,8 +1,8 @@
 import React from 'react';
 import angular from 'angular';
 import {
-  inject as $inject,
-  resolve as $resolve,
+  $inject,
+  $resolve,
   compose
 } from 'angular-react';
 
