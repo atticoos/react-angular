@@ -12,9 +12,7 @@ export default function apply(appliables) {
         super(props);
 
         const $rootScope = props.$injector.get('$rootScope');
-
         this.$componentScope = $rootScope.$new();
-
         this.$apply = this.$apply.bind(this);
       }
 

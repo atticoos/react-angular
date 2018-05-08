@@ -4,11 +4,11 @@ import AngularProvider from './provider';
 
 
 export default function registerReactComponent (angularModule, componentName, Component) {
-  angularModule.directive(componentName, function ($injector, reactDirective) {
+  angularModule.directive(componentName, ['$injector', 'reactDirective', function ($injector, reactDirective) {
     return reactDirective((props) => (
       <AngularProvider $injector={$injector}>
         <Component {...props} />
       </AngularProvider>
     ));
-  });
+  }]);
 }

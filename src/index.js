@@ -6,3 +6,4 @@ export {default as compose} from './compose';
 export {default as watch} from './watch';
 export {default as apply} from './apply';
 export {default as registerReactComponent} from './register';
+export {default as registerReactRouteComponent} from './registerRoute';

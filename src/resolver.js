@@ -9,17 +9,10 @@ import watch from './watch';
  * ```
  * const ReactApp = ({$resoled, count}) => $resolved ? <span>count: {count}</span> : null;
  * ```
- * @param {*} resolveMap
+ * @param {*} resolves
  */
-export default function resolve (resolveMap) {
-  const watchers = Object.keys(resolveMap).filter(resolverName => {
-    let resolver = resolveMap[resolverName];
-    if (typeof resolver !== 'object' || Array.isArray(resolver)) {
-      return false;
-    }
-    return resolver.watch
-  });
-  const withWatchers = watch(watchers);
+export default function resolve (resolves) {
+  const watchers = Object.keys(resolves).filter(name => requiresWatcher(resolves[name]))
 
   return WrappedComponent => {
     if (watchers.length > 0) {
@@ -35,16 +28,13 @@ export default function resolve (resolveMap) {
       }
 
       componentDidMount() {
-        let pendingResolves = Object.keys(resolveMap).reduce((resolves, prop) => {
-          let resolver = withoutWatch(resolveMap[prop])
-          let deps = resolver
-            .slice(0, resolver.length - 1)
-            .map(dep => this.props.$injector.get(dep));
+        let pendingResolves = Object.keys(resolves).reduce((resolved, prop) => {
+          let resolver = resolverFrom(resolves[prop]).slice()
+          let resolve = resolver.pop()
+          let deps = resolver.map(dep => this.props.$injector.get(dep))
 
-          let resolve = resolver[resolver.length - 1];
-
-          resolves[prop] = resolve(...deps)
-          return resolves;
+          resolved[prop] = resolve(...deps)
+          return resolved;
         }, {});
 
         Promise.props(pendingResolves)
@@ -83,6 +73,10 @@ resolve.watch = function watch (resolver) {
   };
 };
 
-function withoutWatch (resolver) {
+function resolverFrom (resolver) {
   return resolver.resolver || resolver;
+}
+
+function requiresWatcher (resolver) {
+  return !!resolver.watch
 }
