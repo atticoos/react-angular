@@ -1,6 +1,6 @@
 import React from 'react';
 import Promise from 'bluebird';
-import withInjector from './withInjector';
+import {withInjector} from './provider';
 import watch from './watch';
 
 /**
