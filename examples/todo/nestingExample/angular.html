@@ -1,0 +1,15 @@
+<div style="background-color: lightgray; padding: 20px; margin: 20px; border: 2px dashed gray;">
+  <h4>[Angular] level {{$ctrl.level}}</h4>
+  <div>state: {{$ctrl.count}}</div>
+  <button ng-click="$ctrl.callback('[Angular] level: ' + $ctrl.level)">
+    callback
+  </button>
+
+  <react-nested
+    ng-if="$ctrl.level < $ctrl.max"
+    level="$ctrl.level + 1"
+    count="$ctrl.count"
+    callback="$ctrl.callback"
+    max="$ctrl.max"
+  ></react-nested>
+</div>

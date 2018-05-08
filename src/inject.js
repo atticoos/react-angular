@@ -51,7 +51,13 @@ function withDigest (api, $scope) {
       let target = obj[prop]
 
       if (typeof target === 'function') {
-        return (...args) => $scope.$apply(() => target.call(target, ...args));
+        return (...args) => {
+          console.log('executing', $scope)
+          var out = target.call(target, ...args)
+          $scope.$applyAsync(() => {})
+          return out;
+          // return $scope.$apply(() => target.call(target, ...args));
+        }
       }
       if (Array.isArray(target)) {
         return target
@@ -62,6 +68,6 @@ function withDigest (api, $scope) {
       return target;
     }
   }
-
+  return api
   return new Proxy(api, digestExecutionContext)
 }

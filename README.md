@@ -33,6 +33,36 @@ registerReactComponent(app, 'exampleReactComponent', ExampleReactComponent)
 <example-react-component value="'Hello World'"></example-react-component>
 ```
 
+### Nesting Angular
+
+```js
+import 'ngReact'
+import angular from 'angular'
+import {
+  registerReactComponent,
+  reactify
+} from 'react-angular'
+
+const app = angular.module('your-project.react', ['react'])
+
+app.component('exampleAngularComponent', {template: 'Angular inside React'})
+const ExampleAngularComponent = reactify('exampleAngularComponent')
+
+function ExampleReactComponent () {
+  return (
+    <div>
+      React rending Angular
+      <ExampleAngularComponent />
+    </div>
+  )
+}
+
+registerReactComponent(app, 'exampleReactNestingAngular', ExampleReactComponent)
+```
+```html
+<example-react-nesting-angular>
+```
+
 ### Complex component example
 
 A React component that depends on Angular services.

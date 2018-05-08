@@ -43,6 +43,10 @@ module.exports = {
     ]
   },
   plugins: [
+    // new webpack.DllReferencePlugin({
+    //   context: __dirname,
+    //   manifest: require('./dist/library.json')
+    // }),
     new HtmlWebpackPlugin({
       inject: true,
       template: path.join(__dirname, 'index.html')

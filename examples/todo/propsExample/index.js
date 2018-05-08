@@ -1,13 +1,13 @@
 import angular from 'angular'
-import ReactExample from './react'
-import AngularExample from './angular'
+import ReactComponent from './react'
+import AngularComponent from './angular'
 import {registerReactComponent} from 'angular-react';
 import template from './index.html'
 
 const app = angular.module('examples.props', ['react'])
 
-app.component('angularPropsExample', AngularExample)
-registerReactComponent(app, 'reactPropsExample', ReactExample)
+app.component('angularPropsExample', AngularComponent)
+registerReactComponent(app, 'reactPropsExample', ReactComponent)
 
 
 app.component('propsExample', {
