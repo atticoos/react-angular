@@ -16,7 +16,7 @@ import {withInjector} from './provider';
  */
 export default function inject (...deps) {
   return WrappedComponent => {
-    class ConnectedAngularComponent extends React.Component {
+    class InjectedAngularComponent extends React.Component {
       static contextTypes = {
         $ng: PropTypes.object
       }
@@ -41,21 +41,17 @@ export default function inject (...deps) {
       }
     }
 
-    return withInjector(ConnectedAngularComponent);
+    return withInjector(InjectedAngularComponent);
   };
 }
 
 function withDigest (api, $scope) {
-  let digestHandler = {
+  let digestExecutionContext = {
     get (obj, prop) {
       let target = obj[prop]
 
       if (typeof target === 'function') {
-        return (...args) => {
-          return $scope.$apply(() => {
-            return obj[prop].call(obj[prop], ...args)
-          })
-        }
+        return (...args) => $scope.$apply(() => target.call(target, ...args));
       }
       if (Array.isArray(target)) {
         return target
@@ -67,5 +63,5 @@ function withDigest (api, $scope) {
     }
   }
 
-  return new Proxy(api, digestHandler)
+  return new Proxy(api, digestExecutionContext)
 }
