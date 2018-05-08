@@ -12,10 +12,8 @@ import {
 
 class Todos extends React.Component {
   addItem() {
-    this.props.$apply(() => {
-      this.props.TodosService.add(this.input.value);
-      this.input.value = '';
-    })
+    this.props.addTodo(this.input.value)
+    this.input.value = ''
   }
 
   removeItem(i) {
@@ -23,7 +21,6 @@ class Todos extends React.Component {
   }
 
   render() {
-    console.log('react props', this.props)
     return (
       <div>
         <input type="text" ref={input => this.input = input} />
@@ -51,7 +48,10 @@ const ConnectedTodos = compose(
   // Watch mutations
   watch('todos'),
 
-  withApply(),
+  // Functions bound to digest cycle ($scope.$apply(..))
+  withApply({
+    addTodo: ['TodosService', TodosService => todo => TodosService.add(todo)]
+  }),
 
   // // Angular service injector
   inject('TodosService')
