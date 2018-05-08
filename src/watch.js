@@ -1,5 +1,5 @@
 import React from 'react';
-import withInjector from './withInjector';
+import {withInjector} from './provider';
 
 export default function watch (...watchProps) {
   return WrappedComponent => {

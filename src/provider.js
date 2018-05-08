@@ -2,11 +2,13 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import angular from 'angular'
 
-const {Provider, Consumer} = React.createProvider({$injector: null})
+const {Provider, Consumer} = React.createContext(null)
 
-function AngularProvider ({$injector, ...props}) {
+export default function AngularProvider ({$injector, children}) {
   return (
-    <Provider {...props} $injector={$injector} />
+    <Provider value={$injector}>
+      {children}
+    </Provider>
   );
 }
 

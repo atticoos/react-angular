@@ -2,7 +2,7 @@ import React from 'react';
 import angular from 'angular';
 import {
   AngularProvider,
-  connectAngular as $inject,
+  inject as $inject,
   apply as $withApply,
   resolve as $resolve,
   compose

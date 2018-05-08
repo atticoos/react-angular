@@ -3,7 +3,7 @@ const webpack = require('webpack')
 
 module.exports = {
   entry: {
-    main: './src/react/connector/index.js'
+    main: './src/index.js'
   },
   devtool: 'cheap-eval-source-map',
   output: {
