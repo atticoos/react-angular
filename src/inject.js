@@ -28,8 +28,13 @@ export default function inject (...deps) {
         const $rootScope = props.$injector.get('$rootScope');
         const $applyScope = $rootScope.$new();
 
-        this.$injections = deps.reduce((injections, dep) => {
-          injections[dep] = withDigest(props.$injector.get(dep), $applyScope)
+        this.$injections = deps.reduce((injections, depName) => {
+          let dep = props.$injector.get(depName)
+          if (digestBlacklist.indexOf(depName) === -1) {
+            dep = withDigest(dep, $applyScope);
+          }
+          injections[depName] = dep;
+          // injections[dep] = withDigest(props.$injector.get(dep), $applyScope)
           return injections;
         }, {});
       }
@@ -45,6 +50,8 @@ export default function inject (...deps) {
   };
 }
 
+const digestBlacklist = ['$rootScope', '$scope', '$compile']
+
 function withDigest (api, $scope) {
   let digestExecutionContext = {
     get (obj, prop) {
@@ -52,10 +59,13 @@ function withDigest (api, $scope) {
 
       if (typeof target === 'function') {
         return (...args) => {
-          console.log('executing', $scope)
-          var out = target.call(target, ...args)
-          $scope.$applyAsync(() => {})
-          return out;
+          try {
+            return $scope.$apply(() => target.call(target, ...args));
+          } catch (e) {
+            let output = target.call(target, ...args)
+            $scope.$applyAsync(() => {})
+            return output;
+          }
           // return $scope.$apply(() => target.call(target, ...args));
         }
       }
@@ -68,6 +78,6 @@ function withDigest (api, $scope) {
       return target;
     }
   }
-  return api
+  // return api
   return new Proxy(api, digestExecutionContext)
 }
