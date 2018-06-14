@@ -7,3 +7,4 @@ export {default as watch} from './watch';
 export {default as apply} from './apply';
 export {default as registerReactComponent} from './register';
 export {default as registerReactRouteComponent} from './registerRoute';
+export {default as forRouter} from './forRouter';
