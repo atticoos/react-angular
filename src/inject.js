@@ -1,11 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {withInjector, $inject} from './provider';
-
-const connect = compose(
-  withInjector,
-  $inject('$rootScope')
-);
+import {withInjector} from './provider';
 
 /**
  * Injects Angular dependencies into a React component through props.
@@ -31,7 +26,7 @@ export default function inject (...deps) {
       $dependencies = {};
 
       // Scope used to handle calling dependency APIs within the digest cycle.
-      $scope = this.props.$rootScope.$new();
+      $scope = this.props.$injector.get('$rootScope').$new();
 
       constructor (props, context) {
         super(props, context);
@@ -66,7 +61,7 @@ export default function inject (...deps) {
       }
     }
 
-    return connect(InjectedAngularComponent);
+    return withInjector(InjectedAngularComponent);
   };
 }
 
@@ -90,10 +85,10 @@ function withDigestExecutionContext (subject, $scope) {
         return (...args) => {
           try {
             // Try to execute synchronously.
-            return $scope.$apply(() => target.call(target, ...args));
+            return $scope.$apply(() => target.call(obj, ...args));
           } catch (e) {
             // Or fall back to an async exeution.
-            let output = target.call(target, ...args)
+            let output = target.call(obj, ...args)
             $scope.$applyAsync(() => {})
             return output;
           }

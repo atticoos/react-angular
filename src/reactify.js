@@ -1,4 +1,5 @@
 import React from 'react';
+import omit from 'lodash.omit';
 import $inject from './inject';
 
 const withDependencies = $inject('$rootScope', '$compile');
@@ -33,8 +34,7 @@ export default function reactify(componentName) {
      * @return {Object} The props for the angular component.
      */
     getForwardProps() {
-      const {$rootScope, $compile, $injector, ...props} = this.props;
-      return props
+      return omit(this.props, ['$rootScope', '$compile', '$injector']);
     }
 
     /**
@@ -57,11 +57,6 @@ export default function reactify(componentName) {
      * @returns {void}
      */
     componentDidUpdate(prevProps) {
-      console.log('did update', {
-        uuid,
-        thisProps: this.props,
-        prevProps
-      })
       if (this.$scope) {
         // Write any property changes to the angular component's compiled scope.
         this.$scope.$applyAsync(() => {

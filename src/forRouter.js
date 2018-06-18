@@ -1,4 +1,5 @@
 import React from 'react';
+import omit from 'lodash.omit';
 import AngularProvider from './provider';
 
 /**
@@ -7,7 +8,7 @@ import AngularProvider from './provider';
  * @param {Function} WrappedComponent The component to make angular's DI available to.
  * @returns {Function} The higher order component that can be attached to the router.
  */
-export default function forRouter (WrappedComponent) {
+export default function forRouter (WrappedComponent, selectProps = defaultSelectProps) {
   class RouterComponent extends React.Component {
     constructor(props) {
       super(props);
@@ -19,7 +20,7 @@ export default function forRouter (WrappedComponent) {
         // Wrap the component within the AngularProvider to make the $injector
         // available to descendants.
         <AngularProvider $injector={this.$injector}>
-          <WrappedComponent {...extractForwardProps(this.props)} />
+          <WrappedComponent {...selectProps(this.props)} />
         </AngularProvider>
       )
     }
@@ -34,7 +35,14 @@ export default function forRouter (WrappedComponent) {
  * @param {Object} props The provided props.
  * @returns {Object} The forwardable props.
  */
-function extractForwardProps (props) {
-  var {$injector, $state$, $stateParams, $transition$, $translate, className, transition, ...forwardProps} = props;
-  return forwardProps;
+function defaultSelectProps (props) {
+  return omit(props, [
+    '$injector',
+    '$state$',
+    '$stateParams',
+    '$transition$',
+    '$translate',
+    'className',
+    'transition'
+  ]);
 }

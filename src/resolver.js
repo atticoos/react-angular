@@ -54,13 +54,13 @@ export default function resolve (resolves) {
         // Execute the resolvers.
         let pendingResolves = Object.keys(resolves).reduce((resolved, prop) => {
           // Gets the full resolver statement, eg ['FooService', FooService => ...]
-          let resolverStatement = resolverFrom(resolves[prop]);
+          let resolveStatement = resolverFrom(resolves[prop]);
 
           // Gets the resolver function, eg FooService => ...
-          let resolver = resolverStatement[resolverStatement.length - 1];
+          let resolver = resolveStatement[resolveStatement.length - 1];
 
           // Gets the dependencies, eg 'FooService'
-          let unresolvedDeps = resolverStatement.slice(0, resolverStatement.length - 1);
+          let unresolvedDeps = resolveStatement.slice(0, resolveStatement.length - 1);
 
           // Resolve the dependencies
           let resolvedDeps = unresolvedDeps.map(dep => $injector.get(dep));
