@@ -1,7 +1,6 @@
 import React from 'react';
 import $inject from './inject';
-
-const withDependencies = $inject('$rootScope');
+import {withScope} from './scopeProvider';
 
 /**
  * Watches properties for mutable changes from angular.
@@ -16,7 +15,7 @@ export default function watch (...watchProps) {
       state = {}
 
       componentDidMount() {
-        this.$watchScope = this.props.$rootScope.$new();
+        this.$watchScope = this.props.$scope.$new();
 
         // Since angular may mutate changes, watch the specified values
         // and update the state with the changes.
@@ -48,6 +47,6 @@ export default function watch (...watchProps) {
       }
     }
 
-    return withDependencies(ComponentWithWatchedProps);
+    return withScope(ComponentWithWatchedProps);
   }
 }
