@@ -1,8 +1,13 @@
 import React from 'react';
 import omit from 'lodash.omit';
+import compose from './compose';
 import $inject from './inject';
+import {withScope} from './provider';
 
-const withDependencies = $inject('$rootScope', '$compile');
+const connect = compose(
+  $inject('$compile'),
+  withScope
+);
 
 /**
  * Make an angular component renderable within a React component.
@@ -34,7 +39,7 @@ export default function reactify(componentName) {
      * @return {Object} The props for the angular component.
      */
     getForwardProps() {
-      return omit(this.props, ['$rootScope', '$compile', '$injector']);
+      return omit(this.props, ['$scope', '$compile', '$injector']);
     }
 
     /**
@@ -73,9 +78,9 @@ export default function reactify(componentName) {
      */
     compileReactRefIntoAngularComponent = (ref) => {
       if (ref) {
-        const {$rootScope, $compile} = this.props;
+        const {$scope, $compile} = this.props;
         // Create the component scope.
-        this.$scope = $rootScope.$new();
+        this.$scope = $scope.$new();
 
         // Write the properties onto the $scope that will be used to
         // compile the angular component
@@ -103,5 +108,5 @@ export default function reactify(componentName) {
       });
     }
   }
-  return withDependencies(ReactifiedComponent);
+  return connect(ReactifiedComponent);
 }

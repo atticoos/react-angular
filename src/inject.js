@@ -1,6 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {withInjector} from './provider';
+import compose from './compose';
+import {withInjector, withScope} from './provider';
+
+const connect = compose(withInjector, withScope);
 
 /**
  * Injects Angular dependencies into a React component through props.
@@ -25,9 +28,6 @@ export default function inject (...deps) {
       // The resolved dependency injections
       $dependencies = {};
 
-      // Scope used to handle calling dependency APIs within the digest cycle.
-      $scope = this.props.$injector.get('$rootScope').$new();
-
       constructor (props, context) {
         super(props, context);
 
@@ -38,7 +38,7 @@ export default function inject (...deps) {
           if (digestBlacklist.indexOf(dependencyName) === -1) {
             // Dependencies with APIs will not be invoked by the React component within angular's digest cycle.
             // Decorated the API with a digest-cycle proxy.
-            dependency = withDigestExecutionContext(dependency, this.$scope);
+            dependency = withDigestExecutionContext(dependency, props.$scope);
           }
 
           injections[dependencyName] = dependency;
@@ -47,7 +47,7 @@ export default function inject (...deps) {
       }
 
       componentWillUnmount() {
-        this.$scope.$destroy();
+        this.props.$scope.$destroy();
       }
 
       render() {
@@ -61,7 +61,7 @@ export default function inject (...deps) {
       }
     }
 
-    return withInjector(InjectedAngularComponent);
+    return connect(InjectedAngularComponent);
   };
 }
 

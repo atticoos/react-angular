@@ -12,9 +12,9 @@ const {Provider, Consumer} = React.createContext(null)
  * @param {Object} props.children Any child components.
  * @returns {Object} The React Provider node.
  */
-export default function AngularProvider ({$injector, children}) {
+export default function AngularProvider ({$injector, $scope, children}) {
   return (
-    <Provider value={$injector}>
+    <Provider value={{$injector, $scope}}>
       {children}
     </Provider>
   );
@@ -29,7 +29,15 @@ export default function AngularProvider ({$injector, children}) {
 export function withInjector (WrappedComponent) {
   return props => (
     <Consumer>
-      {$injector => <WrappedComponent {...props} $injector={$injector} />}
+      {({$injector}) => <WrappedComponent {...props} $injector={$injector} />}
     </Consumer>
   );
+}
+
+export function withScope (WrappedComponent) {
+  return props => (
+    <Consumer>
+      {({$scope}) => <WrappedComponent {...props} $scope={$scope} />}
+    </Consumer>
+  )
 }

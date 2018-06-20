@@ -29,10 +29,10 @@ import AngularProvider from './provider';
 export default function registerReactComponent (angularModule, componentName, Component) {
   angularModule.directive(componentName, ['$injector', 'reactDirective', function ($injector, reactDirective) {
     // Use ngreact's `reactDirective` to handle making React available in Angular.
-    return reactDirective((props) => (
+    return reactDirective(({$scope, ...props}) => (
       // Wrap the component within the AngularProvider
       // allowing the component to access angular's dependency injection.
-      <AngularProvider $injector={$injector}>
+      <AngularProvider $injector={$injector} $scope={$scope}>
         <Component {...props} />
       </AngularProvider>
     ));
