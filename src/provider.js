@@ -2,7 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import angular from 'angular'
 
-const {Provider, Consumer} = React.createContext(null)
+const InjectorContext = React.createContext(null)
+const ScopeContext = React.createContext(null);
 
 /**
  * The AngularProvider makes angular's dependency injection ($injector) available to child React components.
@@ -14,10 +15,28 @@ const {Provider, Consumer} = React.createContext(null)
  */
 export default function AngularProvider ({$injector, $scope, children}) {
   return (
-    <Provider value={{$injector, $scope}}>
-      {children}
-    </Provider>
+    // Provide the $injector to descendants. Consumable via `withInjector`
+    <InjectorContext.Provider value={$injector}>
+      {// Provide the $scope to descendants. Consumable via `withScope`
+      }
+      <ScopeContext.Provider value={$scope}>
+        {children}
+      </ScopeContext.Provider>
+    </InjectorContext.Provider>
   );
+}
+
+// Provides a child scope from a parent scope
+class ChildScope extends React.Component {
+  $childScope = this.props.$scope.$new()
+
+  componentWillUnmount() {
+    this.$childScope.$destroy()
+  }
+
+  render() {
+    return this.props.children(this.$childScope);
+  }
 }
 
 /**
@@ -28,16 +47,30 @@ export default function AngularProvider ({$injector, $scope, children}) {
  */
 export function withInjector (WrappedComponent) {
   return props => (
-    <Consumer>
-      {({$injector}) => <WrappedComponent {...props} $injector={$injector} />}
-    </Consumer>
+    <InjectorContext.Consumer>
+      {$injector => <WrappedComponent {...props} $injector={$injector} />}
+    </InjectorContext.Consumer>
   );
 }
 
+
 export function withScope (WrappedComponent) {
   return props => (
-    <Consumer>
-      {({$scope}) => <WrappedComponent {...props} $scope={$scope} />}
-    </Consumer>
-  )
+    // Get the parent's scope
+    <ScopeContext.Consumer>
+      {$scope => (
+        // Create the child's scope
+        <ChildScope $scope={$scope}>
+          {$childScope => (
+            // Provide our child scope as parent scopes to our descendants
+            <ScopeContext.Provider value={$childScope}>
+              {// Provide our scope to our React component
+              }
+              <WrappedComponent {...props} $scope={$childScope} />
+            </ScopeContext.Provider>
+          )}
+        </ChildScope>
+      )}
+    </ScopeContext.Consumer>
+  );
 }
