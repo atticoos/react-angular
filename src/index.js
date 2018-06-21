@@ -1,5 +1,7 @@
 import 'ngreact';
 export {default as AngularProvider} from './provider';
+export {default as withInjector} from './injectorProvider';
+export {default as withScope} from './scopeProvider';
 export {default as $inject} from './inject';
 export {default as $resolve} from './resolver';
 export {default as watch} from './watch';

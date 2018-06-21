@@ -1,35 +1,27 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import angular from 'angular'
-
-const {Provider, Consumer} = React.createContext(null)
+import {ScopeProvider} from './scopeProvider';
+import {InjectorProvider} from './injectorProvider';
 
 /**
- * The AngularProvider makes angular's dependency injection ($injector) available to child React components.
+ * Provides all descendants with access to Angular's $injector and top-level $scope.
  *
  * @param {Object} props The component props.
  * @param {Object} props.$injector The angular $injector instance.
+ * @param {Object} props.$scope The root React component's $scope.
  * @param {Object} props.children Any child components.
  * @returns {Object} The React Provider node.
  */
-export default function AngularProvider ({$injector, children}) {
+export default function AngularProvider ({$injector, $scope, children}) {
   return (
-    <Provider value={$injector}>
-      {children}
-    </Provider>
-  );
-}
-
-/**
- * A higher order function that provides the $injector as a property to a provided component.
- *
- * @param {Function} WrappedComponent A React component that needs the $injector instance.
- * @returns {Function} A higher order component providing the $injector.
- */
-export function withInjector (WrappedComponent) {
-  return props => (
-    <Consumer>
-      {$injector => <WrappedComponent {...props} $injector={$injector} />}
-    </Consumer>
+    // Provide the $injector to descendants. Consumable via `withInjector`
+    <InjectorProvider $injector={$injector}>
+      {// Provide the $scope to descendants. Consumable via `withScope`
+      }
+      <ScopeProvider $scope={$scope}>
+        {children}
+      </ScopeProvider>
+    </InjectorProvider>
   );
 }
