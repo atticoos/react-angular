@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import compose from './compose';
 import {withInjector} from './injectorProvider';
 import {withScope} from './scopeProvider';
+import {ensureRootDigest} from './digest';
 
 const connect = compose(withInjector, withScope);
 
@@ -84,15 +85,10 @@ function withDigestExecutionContext (subject, $scope) {
       // that will call the original function within the digest cycle.
       if (typeof target === 'function') {
         return (...args) => {
-          try {
-            // Try to execute synchronously.
-            return $scope.$apply(() => target.call(obj, ...args));
-          } catch (e) {
-            // Or fall back to an async exeution.
-            let output = target.call(obj, ...args)
-            $scope.$applyAsync(() => {})
-            return output;
-          }
+          const result = target.call(target, ...args);
+          // Make sure changes always propagate through entire application.
+          ensureRootDigest($scope);
+          return result;
         }
       }
 

@@ -3,6 +3,7 @@ import omit from 'lodash.omit';
 import compose from './compose';
 import $inject from './inject';
 import {withScope} from './scopeProvider';
+import {runInApply} from './digest';
 
 const connect = compose(
   $inject('$compile'),
@@ -62,11 +63,13 @@ export default function reactify(componentName) {
      * @returns {void}
      */
     componentDidUpdate(prevProps) {
-      if (this.$scope) {
+      const {$scope} = this.props;
+      if ($scope) {
         // Write any property changes to the angular component's compiled scope.
-        this.$scope.$applyAsync(() => {
-          Object.assign(this.$scope, this.getForwardProps())
-        })
+        runInApply(
+          $scope,
+          () => Object.assign($scope, this.getForwardProps())
+        )
       }
     }
 
