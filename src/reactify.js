@@ -79,17 +79,16 @@ export default function reactify(componentName) {
     compileReactRefIntoAngularComponent = (ref) => {
       if (ref) {
         const {$scope, $compile} = this.props;
-        // Create the component scope.
-        this.$scope = $scope.$new();
 
         // Write the properties onto the $scope that will be used to
         // compile the angular component
         let props = this.getForwardProps();
-        Object.assign(this.$scope, props)
+        // `withScope` provides us with a new, isolated scope, so we are free to modify it/assign values.
+        Object.assign($scope, props)
 
         // Compile the React reference to the underlying DOM element
         // with the scope to create an angular component.
-        $compile(ref)(this.$scope);
+        $compile(ref)($scope);
       }
     }
 

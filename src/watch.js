@@ -15,12 +15,13 @@ export default function watch (...watchProps) {
       state = {}
 
       componentDidMount() {
-        this.$watchScope = this.props.$scope.$new();
+        // Re-use the scope that this component is already in to watch the values.
+        const {$scope} = this.props;
 
         // Since angular may mutate changes, watch the specified values
         // and update the state with the changes.
-        watchProps.forEach(prop => {
-          this.$watchScope.$watch(
+        this.$watchers = watchProps.map(prop => {
+          return $scope.$watch(
             () => this.props[prop],
             nextValue => {
               this.setState(prevState => ({
@@ -33,7 +34,11 @@ export default function watch (...watchProps) {
       }
 
       componentWillUnmount() {
-        this.$watchScope.$destroy();
+        if (Array.isArray(this.$watchers)) {
+          // Destroy all watchers that this scope has assigned.
+          // This is important to prevent memory leaks.
+          this.$watchers.forEach(watcher => watcher())
+        }
       }
 
       render() {

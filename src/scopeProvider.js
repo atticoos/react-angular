@@ -31,7 +31,7 @@ export const ScopeProvider = ({$scope, children}) => (
  * </ChildScope>
  */
 class ChildScope extends React.Component {
-  $scope = this.props.$scope.$new();
+  $scope = this.props.$scope.$new(true);
 
   componentWillUnmount() {
     this.$scope.$destroy();
