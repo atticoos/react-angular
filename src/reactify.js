@@ -39,7 +39,7 @@ export default function reactify(componentName) {
      * @return {Object} The props for the angular component.
      */
     getForwardProps() {
-      return omit(this.props, ['$scope', '$compile', '$injector']);
+      return omit(this.props, ['$scope', '$compile', '$injector', 'children']);
     }
 
     /**
@@ -51,7 +51,7 @@ export default function reactify(componentName) {
      */
     getAngularAttributes() {
       return Object.keys(this.getForwardProps()).reduce((attrs, key) => {
-        attrs[key] = key;
+        attrs[key] = normalizeAttr(key);
         return attrs;
       }, {});
     }
@@ -84,8 +84,12 @@ export default function reactify(componentName) {
 
         // Write the properties onto the $scope that will be used to
         // compile the angular component
-        let props = this.getForwardProps();
-        Object.assign(this.$scope, props)
+        let forwardProps = this.getForwardProps()
+        let scopeProps = Object.keys(forwardProps).reduce((map, key) => {
+          map[normalizeAttr(key)] = forwardProps[key]
+          return map
+        }, {});
+        Object.assign(this.$scope, scopeProps);
 
         // Compile the React reference to the underlying DOM element
         // with the scope to create an angular component.
@@ -105,8 +109,10 @@ export default function reactify(componentName) {
         // Compile the angular component with $scope
         // IMPORTANT: the function passed to `ref` must be the same instance across renders
         ref: this.compileReactRefIntoAngularComponent
-      });
+      }, this.props.children);
     }
   }
   return connect(ReactifiedComponent);
 }
+
+const normalizeAttr = s => s.replace(/(\-\w)/g, m =>  m[1].toUpperCase());
