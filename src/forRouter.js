@@ -13,13 +13,14 @@ export default function forRouter (WrappedComponent, selectProps = defaultSelect
     constructor(props) {
       super(props);
       this.$injector = this.props.transition.injector();
+      this.$scope = this.$injector.get('$rootScope').$new(true);
     }
 
     render() {
       return (
-        // Wrap the component within the AngularProvider to make the $injector
+        // Wrap the component within the AngularProvider to make the $injector and $scope
         // available to descendants.
-        <AngularProvider $injector={this.$injector}>
+        <AngularProvider $injector={this.$injector} $scope={this.$scope}>
           <WrappedComponent {...selectProps(this.props)} />
         </AngularProvider>
       )
