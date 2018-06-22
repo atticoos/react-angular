@@ -10,6 +10,25 @@ const connect = compose(
   withScope
 );
 
+const PREFIX_REGEXP = /^((?:x|data)[:\-_])/i,
+      SPECIAL_CHARS_REGEXP = /[:\-_]+(.)/g;
+
+/**
+ * Converts all accepted directives format into proper directive name.
+ * Note: It's intentionally left completely unchanged in terms of syntax sugar as well.
+ *
+ * @see {@link https://github.com/angular/angular.js/blob/78b9f61/src/ng/compile.js#L3702-L3715|Source}
+ * @param {string} name Name to normalize.
+ * @return {string}
+ */
+export function directiveNormalize(name) {
+  return name
+    .replace(PREFIX_REGEXP, '')
+    .replace(SPECIAL_CHARS_REGEXP, (_, letter, offset) => {
+      return offset ? letter.toUpperCase() : letter;
+    });
+}
+
 /**
  * Make an angular component renderable within a React component.
  *
@@ -52,7 +71,7 @@ export default function reactify(componentName) {
      */
     getAngularAttributes() {
       return Object.keys(this.getForwardProps()).reduce((attrs, key) => {
-        attrs[key] = key;
+        attrs[key] = directiveNormalize(key);
         return attrs;
       }, {});
     }
@@ -85,9 +104,13 @@ export default function reactify(componentName) {
 
         // Write the properties onto the $scope that will be used to
         // compile the angular component
-        let props = this.getForwardProps();
+        let forwardProps = this.getForwardProps()
+        let scopeProps = Object.keys(forwardProps).reduce((map, key) => {
+          map[directiveNormalize(key)] = forwardProps[key]
+          return map
+        }, {});
         // `withScope` provides us with a new, isolated scope, so we are free to modify it/assign values.
-        Object.assign($scope, props)
+        Object.assign($scope, scopeProps)
 
         // Compile the React reference to the underlying DOM element
         // with the scope to create an angular component.
