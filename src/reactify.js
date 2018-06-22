@@ -40,7 +40,7 @@ export default function reactify(componentName) {
      * @return {Object} The props for the angular component.
      */
     getForwardProps() {
-      return omit(this.props, ['$scope', '$compile', '$injector']);
+      return omit(this.props, ['$scope', '$compile', '$injector', 'children']);
     }
 
     /**
@@ -107,7 +107,7 @@ export default function reactify(componentName) {
         // Compile the angular component with $scope
         // IMPORTANT: the function passed to `ref` must be the same instance across renders
         ref: this.compileReactRefIntoAngularComponent
-      });
+      }, this.props.children);
     }
   }
   return connect(ReactifiedComponent);
