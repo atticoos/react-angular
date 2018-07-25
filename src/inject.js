@@ -35,9 +35,14 @@ export default function inject (...deps) {
 
         // Resolve all the dependencies.
         this.$dependencies = deps.reduce((injections, dependencyName) => {
+          let bind = false;
+          if (typeof dependencyName === 'object') {
+            bind = !!dependencyName.bind
+            dependencyName = dependencyName.dep;
+          }
           let dependency = props.$injector.get(dependencyName)
 
-          if (digestBlacklist.indexOf(dependencyName) === -1) {
+          if (bind) {
             // Dependencies with APIs will not be invoked by the React component within angular's digest cycle.
             // Decorated the API with a digest-cycle proxy.
             dependency = withDigestExecutionContext(dependency, props.$scope);
@@ -67,7 +72,10 @@ export default function inject (...deps) {
   };
 }
 
-const digestBlacklist = ['$rootScope', '$scope', '$compile']
+inject.bind = dep => ({
+  dep,
+  bind: true
+})
 
 /**
  * Creates a digest cycle execution context around a dependency.
